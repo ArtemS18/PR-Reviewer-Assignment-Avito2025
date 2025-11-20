@@ -7,6 +7,10 @@ type UserDTO struct {
 	Name     string `json:"username"`
 	IsActive bool   `json:"is_active"`
 }
+type UserReviewDTO struct {
+	UserDTO
+	PullRequest ds.PullRequest
+}
 
 func ToUserDTO(userORM ds.User) UserDTO {
 	return UserDTO{

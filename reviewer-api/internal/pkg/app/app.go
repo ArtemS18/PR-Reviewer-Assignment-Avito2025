@@ -10,22 +10,22 @@ import (
 )
 
 type Application struct {
-	Config  *config.Config
-	Router  *gin.Engine
-	Handler *http.TeamHandler
+	Config   *config.Config
+	Router   *gin.Engine
+	Handlers *http.Handlers
 }
 
-func NewApplication(c *config.Config, r *gin.Engine, h *http.TeamHandler) *Application {
+func NewApplication(c *config.Config, r *gin.Engine, h *http.Handlers) *Application {
 	return &Application{
-		Config:  c,
-		Router:  r,
-		Handler: h,
+		Config:   c,
+		Router:   r,
+		Handlers: h,
 	}
 }
 
 func (app *Application) RunApplication() {
 	log.Println("Server start up")
-	//app.Handler.RegisterHandlers(app.Router)
+	app.Handlers.Register(app.Router)
 	address := fmt.Sprintf("%s:%d", app.Config.HTTPHost, app.Config.HTTPPort)
 	if err := app.Router.Run(address); err != nil {
 		log.Fatal(err)

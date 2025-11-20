@@ -1,11 +1,7 @@
 package ds
 
 import (
-	"fmt"
 	"time"
-
-	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
 
 type PRStatus string
@@ -24,9 +20,4 @@ type PullRequest struct {
 
 	Author            User       `gorm:"foreignKey:AuthorID" json:"-"`
 	AssignedReviewers []Reviewer `gorm:"foreignKey:PullRequestID" json:"assigned_reviewers"`
-}
-
-func (u *PullRequest) BeforeCreate(tx *gorm.DB) (err error) {
-	u.ID = fmt.Sprintf("pk-%s", uuid.NewString())
-	return nil
 }
