@@ -19,5 +19,5 @@ type PullRequest struct {
 	MergedAt *time.Time `gorm:"default:null" json:"merged_at"`
 
 	Author            User       `gorm:"foreignKey:AuthorID" json:"-"`
-	AssignedReviewers []Reviewer `gorm:"foreignKey:PullRequestID" json:"assigned_reviewers"`
+	AssignedReviewers []Reviewer `gorm:"foreignKey:PullRequestID" json:"-"`
 }

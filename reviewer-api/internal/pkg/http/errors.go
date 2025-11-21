@@ -24,6 +24,12 @@ func HandelError(ctx *gin.Context, err error) {
 			http.StatusConflict,
 			PR_EXISTS,
 		)
+	case repository.ErrReassign:
+		ctx.AbortWithStatusJSON(
+			http.StatusConflict,
+			PR_MERGED,
+		)
+
 	default:
 		ctx.AbortWithStatusJSON(
 			http.StatusInternalServerError,

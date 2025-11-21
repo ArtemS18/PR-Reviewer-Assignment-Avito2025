@@ -51,3 +51,10 @@ var PR_EXISTS = ErrorResp{
 		Message: "PR id already exists",
 	},
 }
+
+var PR_MERGED = ErrorResp{
+	Error: ErrorData{
+		Code:    "PR_MERGED",
+		Message: "cannot reassign on merged PR",
+	},
+}

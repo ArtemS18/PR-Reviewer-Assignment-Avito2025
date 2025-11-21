@@ -4,7 +4,6 @@ import (
 	"reviewer-api/internal/app/ds"
 	"reviewer-api/internal/app/repository"
 
-	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -22,12 +21,9 @@ func (p *Postgres) SetUserFlag(user_id string, is_active bool) (ds.User, error) 
 
 func (p *Postgres) GetReview(user_id string) (ds.User, error) {
 	var user ds.User
-	err := p.db.Preload("Assigned").Where("id = ?", user_id).Find(&user).Error
+	err := p.db.Model(&ds.User{}).Preload("Assigned").Where("id = ?", user_id).First(&user).Error
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return ds.User{}, repository.ErrNotFound
-		}
-		return ds.User{}, err
+		return ds.User{}, repository.HandelPgError(err, "users")
 	}
 	return user, nil
 }

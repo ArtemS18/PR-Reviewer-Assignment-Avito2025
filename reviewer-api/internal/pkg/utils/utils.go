@@ -11,6 +11,9 @@ func Remove[T comparable](s []T, i int) []T {
 }
 
 func GetRandomSlice(baseSlice []string) []string {
+	if len(baseSlice) == 0 {
+		return []string{}
+	}
 	s := rand.NewSource(time.Now().Unix())
 	r := rand.New(s)
 	tmp := make([]string, len(baseSlice))

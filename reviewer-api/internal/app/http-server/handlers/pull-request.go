@@ -12,6 +12,7 @@ import (
 type PKRepository interface {
 	CreatePullRequest(pkDTO dto.PullRequestCreateDTO) (ds.PullRequest, error)
 	ReassignReviewer(pk_id string, old_reviewer_id string) (ds.PullRequest, error)
+	Merged(pk_id string) (ds.PullRequest, error)
 }
 
 type PKHandler struct {
@@ -35,13 +36,13 @@ func (h *PKHandler) CreateNewPullRequest(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, dto.ToPullRequestDTO(team))
 }
 
-type ReassgnPKSchema struct {
+type ReassgnPRSchema struct {
 	PullRequestID string `json:"pull_request_id"`
 	OldRevID      string `json:"old_reviewer_id"`
 }
 
 func (h *PKHandler) ReassignPullRequest(ctx *gin.Context) {
-	var raw ReassgnPKSchema
+	var raw ReassgnPRSchema
 	err := ctx.BindJSON(&raw)
 	if err != nil {
 		ctx.AbortWithStatusJSON(
@@ -50,6 +51,27 @@ func (h *PKHandler) ReassignPullRequest(ctx *gin.Context) {
 		)
 	}
 	pr, err := h.repo.ReassignReviewer(raw.PullRequestID, raw.OldRevID)
+	if err != nil {
+		pkg.HandelError(ctx, err)
+		return
+	}
+	pkg.OkResponse(ctx, dto.ToPullRequestDTO(pr))
+}
+
+type MergedPRSchema struct {
+	PullRequestID string `json:"pull_request_id"`
+}
+
+func (h *PKHandler) MergedPR(ctx *gin.Context) {
+	var raw MergedPRSchema
+	err := ctx.BindJSON(&raw)
+	if err != nil {
+		ctx.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			pkg.BAD_REQUEST,
+		)
+	}
+	pr, err := h.repo.Merged(raw.PullRequestID)
 	if err != nil {
 		pkg.HandelError(ctx, err)
 		return

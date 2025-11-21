@@ -32,7 +32,7 @@ func (h *TeamHandler) GetTeam(ctx *gin.Context) {
 		pkg.HandelError(ctx, err)
 		return
 	}
-	pkg.OkResponse(ctx, team)
+	pkg.OkResponse(ctx, dto.ToTeamDTO(team))
 }
 
 func (h *TeamHandler) AddTeam(ctx *gin.Context) {
@@ -49,5 +49,5 @@ func (h *TeamHandler) AddTeam(ctx *gin.Context) {
 		pkg.HandelError(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusCreated, team)
+	ctx.JSON(http.StatusCreated, dto.ToTeamDTO(team))
 }

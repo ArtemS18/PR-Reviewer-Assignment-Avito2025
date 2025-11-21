@@ -29,4 +29,5 @@ func (h *Handlers) Register(r *gin.Engine) {
 
 	r.POST("/pullRequest/create", h.PR.CreateNewPullRequest)
 	r.POST("/pullRequest/reassign", h.PR.ReassignPullRequest)
+	r.POST("/pullRequest/merge", h.PR.MergedPR)
 }
