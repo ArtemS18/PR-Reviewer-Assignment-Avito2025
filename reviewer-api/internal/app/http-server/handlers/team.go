@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"reviewer-api/internal/app/ds"
 	"reviewer-api/internal/app/dto"
-	"reviewer-api/internal/app/repository"
 	pkg "reviewer-api/internal/pkg/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,18 +29,7 @@ func (h *TeamHandler) GetTeam(ctx *gin.Context) {
 	}
 	team, err := h.repo.GetTeam(teamName)
 	if err != nil {
-		switch err {
-		case repository.ErrNotFound:
-			ctx.AbortWithStatusJSON(
-				http.StatusNotFound,
-				pkg.NOT_FOUND,
-			)
-		default:
-			ctx.AbortWithStatusJSON(
-				http.StatusInternalServerError,
-				pkg.BAD_REQUEST,
-			)
-		}
+		pkg.HandelError(ctx, err)
 		return
 	}
 	pkg.OkResponse(ctx, team)
@@ -58,18 +46,7 @@ func (h *TeamHandler) AddTeam(ctx *gin.Context) {
 	}
 	team, err := h.repo.AddTeam(teamDTO)
 	if err != nil {
-		switch err {
-		case repository.ErrAlreadyExists:
-			ctx.AbortWithStatusJSON(
-				http.StatusBadRequest,
-				pkg.TEAM_EXISTS,
-			)
-		default:
-			ctx.AbortWithStatusJSON(
-				http.StatusInternalServerError,
-				pkg.BAD_REQUEST,
-			)
-		}
+		pkg.HandelError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, team)

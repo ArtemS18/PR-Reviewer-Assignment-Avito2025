@@ -29,3 +29,14 @@ func GetRandomSlice(baseSlice []string) []string {
 	}
 	return randomSlice
 }
+func GetRandomNumber(baseSlice []string) string {
+	s := rand.NewSource(time.Now().Unix())
+	r := rand.New(s)
+	var rand_id int
+	if len(baseSlice) > 0 {
+		rand_id = r.Intn(len(baseSlice))
+	} else {
+		return ""
+	}
+	return baseSlice[rand_id]
+}

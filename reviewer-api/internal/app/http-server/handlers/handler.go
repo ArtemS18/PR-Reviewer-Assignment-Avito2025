@@ -28,4 +28,5 @@ func (h *Handlers) Register(r *gin.Engine) {
 	r.GET("/users/getReview", h.User.GetUserReview)
 
 	r.POST("/pullRequest/create", h.PR.CreateNewPullRequest)
+	r.POST("/pullRequest/reassign", h.PR.ReassignPullRequest)
 }

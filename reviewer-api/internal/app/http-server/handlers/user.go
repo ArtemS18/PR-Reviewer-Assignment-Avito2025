@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 	"reviewer-api/internal/app/ds"
-	"reviewer-api/internal/app/repository"
 	pkg "reviewer-api/internal/pkg/http"
 
 	"github.com/gin-gonic/gin"
@@ -34,13 +33,7 @@ func (h *UserHandler) UpdateUserActivity(ctx *gin.Context) {
 	}
 	user, err := h.repo.SetUserFlag(userData.UserId, userData.IsActive)
 	if err != nil {
-		switch err {
-		case repository.ErrNotFound:
-			ctx.AbortWithStatusJSON(
-				http.StatusNotFound,
-				pkg.NOT_FOUND,
-			)
-		}
+		pkg.HandelError(ctx, err)
 		return
 	}
 	pkg.OkResponse(ctx, user)
@@ -57,18 +50,7 @@ func (h *UserHandler) GetUserReview(ctx *gin.Context) {
 	}
 	user, err := h.repo.GetReview(userName)
 	if err != nil {
-		switch err {
-		case repository.ErrNotFound:
-			ctx.AbortWithStatusJSON(
-				http.StatusNotFound,
-				pkg.NOT_FOUND,
-			)
-		default:
-			ctx.AbortWithStatusJSON(
-				http.StatusInternalServerError,
-				pkg.BAD_REQUEST,
-			)
-		}
+		pkg.HandelError(ctx, err)
 		return
 	}
 	pkg.OkResponse(ctx, user)

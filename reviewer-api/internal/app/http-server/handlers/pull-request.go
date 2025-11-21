@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"reviewer-api/internal/app/ds"
 	"reviewer-api/internal/app/dto"
-	"reviewer-api/internal/app/repository"
 	pkg "reviewer-api/internal/pkg/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,6 +11,7 @@ import (
 
 type PKRepository interface {
 	CreatePullRequest(pkDTO dto.PullRequestCreateDTO) (ds.PullRequest, error)
+	ReassignReviewer(pk_id string, old_reviewer_id string) (ds.PullRequest, error)
 }
 
 type PKHandler struct {
@@ -29,24 +29,30 @@ func (h *PKHandler) CreateNewPullRequest(ctx *gin.Context) {
 	}
 	team, err := h.repo.CreatePullRequest(pkDTO)
 	if err != nil {
-		switch err {
-		case repository.ErrNotFound:
-			ctx.AbortWithStatusJSON(
-				http.StatusNotFound,
-				pkg.NOT_FOUND,
-			)
-		case repository.ErrAlreadyExists:
-			ctx.AbortWithStatusJSON(
-				http.StatusConflict,
-				pkg.PR_EXISTS,
-			)
-		default:
-			ctx.AbortWithStatusJSON(
-				http.StatusInternalServerError,
-				pkg.BAD_REQUEST,
-			)
-		}
+		pkg.HandelError(ctx, err)
 		return
 	}
 	ctx.JSON(http.StatusCreated, dto.ToPullRequestDTO(team))
+}
+
+type ReassgnPKSchema struct {
+	PullRequestID string `json:"pull_request_id"`
+	OldRevID      string `json:"old_reviewer_id"`
+}
+
+func (h *PKHandler) ReassignPullRequest(ctx *gin.Context) {
+	var raw ReassgnPKSchema
+	err := ctx.BindJSON(&raw)
+	if err != nil {
+		ctx.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			pkg.BAD_REQUEST,
+		)
+	}
+	pr, err := h.repo.ReassignReviewer(raw.PullRequestID, raw.OldRevID)
+	if err != nil {
+		pkg.HandelError(ctx, err)
+		return
+	}
+	pkg.OkResponse(ctx, dto.ToPullRequestDTO(pr))
 }

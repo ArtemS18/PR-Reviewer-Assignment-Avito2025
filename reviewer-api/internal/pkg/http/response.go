@@ -31,6 +31,12 @@ var BAD_REQUEST = ErrorResp{
 		Message: "bad data in request",
 	},
 }
+var UNEXPECT = ErrorResp{
+	Error: ErrorData{
+		Code:    "UNEXPECT",
+		Message: "unexpect error",
+	},
+}
 
 var TEAM_EXISTS = ErrorResp{
 	Error: ErrorData{
