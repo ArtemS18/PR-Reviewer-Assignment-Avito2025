@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/joho/godotenv"
@@ -26,7 +27,11 @@ type DBConfig struct {
 
 func New() (*Config, error) {
 	var cfg Config
-	_ = godotenv.Load("../.env")
+	config_path := os.Getenv("ENV_FILE")
+	if config_path == "" {
+		config_path = "../.env"
+	}
+	_ = godotenv.Load(config_path)
 
 	err := cleanenv.ReadEnv(&cfg)
 	if err != nil {

@@ -1,4 +1,4 @@
-package handlers
+package team
 
 import (
 	"net/http"
@@ -16,6 +16,10 @@ type TeamRepository interface {
 
 type TeamHandler struct {
 	repo TeamRepository
+}
+
+func NewTeamHandler(repo TeamRepository) *TeamHandler {
+	return &TeamHandler{repo: repo}
 }
 
 func (h *TeamHandler) GetTeam(ctx *gin.Context) {

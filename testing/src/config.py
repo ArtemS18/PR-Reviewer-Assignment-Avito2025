@@ -1,0 +1,9 @@
+BASE_URL = "http://localhost:8080"
+
+TEAMS_COUNT = 20
+USERS_PER_TEAM = 10  # 20 * 10 = 200
+SEED_DATA_FILE = "seed_data.json"
+
+DURATION_SECONDS = 60
+RPS = 5
+CONCURRENCY = 10

@@ -1,4 +1,4 @@
-package handlers
+package pk
 
 import (
 	"net/http"
@@ -17,6 +17,10 @@ type PKRepository interface {
 
 type PKHandler struct {
 	repo PKRepository
+}
+
+func NewPKHandler(repo PKRepository) *PKHandler {
+	return &PKHandler{repo: repo}
 }
 
 func (h *PKHandler) CreateNewPullRequest(ctx *gin.Context) {

@@ -42,37 +42,3 @@ func (p *Postgres) AddTeam(teamData dto.TeamDTO) (ds.Team, error) {
 	team.Members = members
 	return team, nil
 }
-
-// func (p *Postgres) AddTeam(teamData dto.TeamDTO) (ds.Team, error) {
-// 	var team ds.Team
-// 	err := p.db.Preload("Members").Where("name = ?", teamData.Name).First(&team).Error
-// 	if err != nil {
-// 		switch err {
-// 		case gorm.ErrRecordNotFound:
-// 			team, err = p.createTeam(teamData)
-// 			if err != nil {
-// 				return ds.Team{}, err
-// 			}
-// 			return team, nil
-// 		default:
-// 			return ds.Team{}, err
-// 		}
-// 	}
-
-// 	newMembers := dto.ToUserORMList(team.ID, teamData.Members)
-
-// 	//for _, user := range newMembers {
-// 	err = p.db.Clauses(clause.OnConflict{
-// 		Columns:   []clause.Column{{Name: "id"}},
-// 		DoUpdates: clause.AssignmentColumns([]string{"name", "is_active", "team_id"}),
-// 	}).Create(&newMembers).Error
-// 	if err != nil {
-// 		return ds.Team{}, err
-// 	}
-// 	//}
-// 	err = p.db.Preload("Members").Find(&team).Error
-// 	if err != nil {
-// 		return ds.Team{}, err
-// 	}
-// 	return team, nil
-// }

@@ -1,4 +1,4 @@
-package handlers
+package user
 
 import (
 	"net/http"
@@ -15,6 +15,10 @@ type UserRepository interface {
 
 type UserHandler struct {
 	repo UserRepository
+}
+
+func NewUserHandler(repo UserRepository) *UserHandler {
+	return &UserHandler{repo: repo}
 }
 
 type UserUpdateSchema struct {
