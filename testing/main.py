@@ -5,7 +5,7 @@ import sys
 async def main():
     if sys.argv[1] == "test":
         await stress_test.run_stress_test()
-    elif sys.argv[1] == "fill":
+    elif sys.argv[1] == "fill_db":
         await seed_db.fill_db()
     else:
         raise RuntimeError("unexpect command")

@@ -70,7 +70,7 @@ pip install -r req.txt
 Запуск стресс-теста (длится порядка 10 секунд):
 
 ```
-python stress_test.py
+python main.py test
 ```
 
 Наполнить БД тестовыми данными:
@@ -82,7 +82,7 @@ psql "host=localhost port=5432 dbname=postgres user=postgres password=postgres" 
 или Python-скрипт
 
 ```
-python seed_db.py
+python main.py fill_db
 ```
 ---
 
