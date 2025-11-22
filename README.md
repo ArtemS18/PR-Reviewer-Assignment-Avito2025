@@ -67,9 +67,11 @@ cd testing
 pip install -r req.txt
 ```
 
-Запуск стресс-теста:
+Запуск стресс-теста (длится порядка 10 секунд):
 
-```python stress_test.py```
+```
+python stress_test.py
+```
 
 Наполнить БД тестовыми данными:
 
@@ -79,13 +81,14 @@ psql "host=localhost port=5432 dbname=postgres user=postgres password=postgres" 
 ```
 или Python-скрипт
 
-```python seed_db.py```
-
-text
-
+```
+python seed_db.py
+```
 ---
 
-```--- Stress test results ---
+Пример вывода теста:
+```
+--- Stress test results ---
 Total requests: 300
 Success: 300 (100.0000%)
 Latency p50: 80.49 ms
@@ -95,4 +98,5 @@ Errors: 0
 
 SLI check:
 - success_rate >= 99.9%: OK
-- p95 <= 300 ms: OK```
+- p95 <= 300 ms: OK
+```
