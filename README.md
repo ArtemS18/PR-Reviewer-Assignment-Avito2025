@@ -32,7 +32,8 @@
    DB_PORT=5432
    DB_NAME=postgres
    DB_USER=postgres
-   DB_PASS=postgres```
+   DB_PASS=postgres
+   ```
 
 
 ### 2. Запуск через Docker Compose
@@ -44,7 +45,7 @@
 
 ### 3. Миграции БД
 
-**Локально:**
+**Локально (создают только сами таблицы, без заполнения данных):**
 
 ```cd reviewer-api
 go run ./cmd/migrate
@@ -58,7 +59,7 @@ go run ./cmd/migrate
 go test ./internal/app/http-server/handlers/...
 ```
 
-### Нагрузочное тестирование (Python)
+### Нагрузочное тестирование и заполнен данными (Python)
 
 Установите зависимости:
 
@@ -67,19 +68,15 @@ cd testing
 pip install -r req.txt
 ```
 
-Запуск стресс-теста (длится порядка 10 секунд):
+Запуск стресс-теста (длится порядка 10 секунд) ПЕРЕЗАПИСЫВАЕТ users(200) и teams(20):
 
 ```
 python main.py test
 ```
 
-Наполнить БД тестовыми данными:
+Наполнить БД тестовыми данными ПЕРЕЗАПИСЫВАЕТ users(200) и teams(20):
 
-SQL-скрипт
-```
-psql "host=localhost port=5432 dbname=postgres user=postgres password=postgres" -f seed.sql 
-```
-или Python-скрипт
+Python-скрипт
 
 ```
 python main.py fill_db

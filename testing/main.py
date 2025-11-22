@@ -4,9 +4,11 @@ import sys
 
 async def main():
     if sys.argv[1] == "test":
+        seed_db.fill_db()
         await stress_test.run_stress_test()
+        seed_db.truncate_db()
     elif sys.argv[1] == "fill_db":
-        await seed_db.fill_db()
+        seed_db.fill_db()
     else:
         raise RuntimeError("unexpect command")
 

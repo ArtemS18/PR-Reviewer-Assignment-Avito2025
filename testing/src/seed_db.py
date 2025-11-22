@@ -1,58 +1,98 @@
-import asyncio
 import json
 import random
-import config
 import string
+import uuid
 
-import httpx
+import psycopg2
+
+import config
 
 
-def rand_id(prefix: str, length: int = 8) -> str:
-    return f"{prefix}-" + "".join(
+def rand_suffix(length: int = 8) -> str:
+    return "".join(
         random.choices(string.ascii_lowercase + string.digits, k=length)
     )
-
-
-async def create_team(client: httpx.AsyncClient, idx: int):
-    team_name = f"team-{idx}"
-    members = []
-    for i in range(config.USERS_PER_TEAM):
-        user_id = rand_id(f"user{idx}_{i}")
-        members.append(
-            {
-                "user_id": user_id,
-                "username": f"user-{idx}-{i}",
-                "is_active": True,
-            }
-        )
-
-    resp = await client.post(
-        f"{config.BASE_URL}/team/add",
-        json={"team_name": team_name, "members": members},
-        timeout=5.0,
+def truncate_db():
+    conn = psycopg2.connect(
+        host=config.DB_HOST,
+        port=config.DB_PORT,
+        dbname=config.DB_NAME,
+        user=config.DB_USER,
+        password=config.DB_PASS,
     )
-    resp.raise_for_status()
-    return {
-        "team_name": team_name,
-        "members": members,
-    }
+    conn.autocommit = False
+    cur = conn.cursor()
+    cur.execute("TRUNCATE reviewers, pull_requests, users, teams RESTART IDENTITY CASCADE;")
+    conn.commit()
+    cur.close()
+    conn.close()
 
+def fill_db():
+    conn = psycopg2.connect(
+        host=config.DB_HOST,
+        port=config.DB_PORT,
+        dbname=config.DB_NAME,
+        user=config.DB_USER,
+        password=config.DB_PASS,
+    )
+    conn.autocommit = False
+    cur = conn.cursor()
 
-async def fill_db():
-    async with httpx.AsyncClient() as client:
-        tasks = [create_team(client, i) for i in range(config.TEAMS_COUNT)]
-        teams = await asyncio.gather(*tasks)
+    cur.execute("TRUNCATE reviewers, pull_requests, users, teams RESTART IDENTITY CASCADE;")
 
+    teams = []
     users = []
-    for t in teams:
-        for m in t["members"]:
-            users.append(
+
+    for ti in range(config.TEAMS_COUNT):
+        team_id = f"team-{uuid.uuid4()}"
+        team_name = f"team-{ti}"
+
+        cur.execute(
+            """
+            INSERT INTO teams (id, name)
+            VALUES (%s, %s)
+            ON CONFLICT (name) DO UPDATE SET name = EXCLUDED.name
+            RETURNING id
+            """,
+            (team_id, team_name),
+        )
+        row = cur.fetchone()
+        if row:
+            team_id = row[0]
+
+        team_record = {"team_name": team_name, "members": []}
+
+        for ui in range(config.USERS_PER_TEAM):
+            user_id = f"user-{rand_suffix()}"
+            username = f"user-{ti}-{ui}"
+            cur.execute(
+                """
+                INSERT INTO users (id, name, is_active, team_id)
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (id) DO NOTHING
+                """,
+                (user_id, username, True, team_id),
+            )
+
+            user_info = {
+                "id": user_id,
+                "name": username,
+                "team": team_name,
+            }
+            users.append(user_info)
+            team_record["members"].append(
                 {
-                    "id": m["user_id"],
-                    "name": m["username"],
-                    "team": t["team_name"],
+                    "user_id": user_id,
+                    "username": username,
+                    "is_active": True,
                 }
             )
+
+        teams.append(team_record)
+
+    conn.commit()
+    cur.close()
+    conn.close()
 
     data = {"teams": teams, "users": users}
 
@@ -62,3 +102,6 @@ async def fill_db():
     print(f"Seeded {len(teams)} teams, {len(users)} users")
     print(f"Saved data to {config.SEED_DATA_FILE}")
 
+
+if __name__ == "__main__":
+    fill_db()
