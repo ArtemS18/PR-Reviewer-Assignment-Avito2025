@@ -62,8 +62,10 @@ go test ./internal/app/http-server/handlers/...
 
 Установите зависимости:
 
-```cd testing
-pip install -r req.txt```
+```
+cd testing
+pip install -r req.txt
+```
 
 Запуск стресс-теста:
 
@@ -72,8 +74,9 @@ pip install -r req.txt```
 Наполнить БД тестовыми данными:
 
 SQL-скрипт
-
-psql "host=localhost port=5432 dbname=postgres user=postgres password=postgres" -f seed.sql
+```
+psql "host=localhost port=5432 dbname=postgres user=postgres password=postgres" -f seed.sql 
+```
 или Python-скрипт
 
 ```python seed_db.py```
