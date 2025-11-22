@@ -86,6 +86,7 @@ python main.py locust_test
 ![alt text](docs/image-1.png)
 
 После теста users и teams очищаются
+
 ---
 
 Наполнить users (200) и teams (20) тестовыми данными :
