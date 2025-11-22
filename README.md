@@ -12,6 +12,7 @@
   - `cmd/migrate/main.go` — миграции (GORM AutoMigrate).
   - `internal/app/ds` — модели БД (`Team`, `User`, `PullRequest`, `Reviewer`).
   - `internal/app/http-server/handlers` — HTTP‑хендлеры.
+  - `internal/app/service` — Сервисный слой
   - `Dockerfile` — сборка сервиса.
 - `docker-compose.yaml` — Postgres + backend.
 - `seed.sql` — SQL‑скрипт для заполнения БД тестовыми данными.
@@ -57,7 +58,8 @@ go run ./cmd/migrate
 ### Unit-тесты (Go)
 
 ```cd reviewer-api
-go test ./internal/app/http-server/handlers/...
+go test ./internal/app/http-server/...
+go test ./internal/app/service/...
 ```
 
 ### Нагрузочное тестирование и заполнен данными (Python)
@@ -86,15 +88,12 @@ python main.py fill_db
 
 Пример вывода теста:
 ```
---- Stress test results ---
-Total requests: 300
-Success: 300 (100.0000%)
-Latency p50: 80.49 ms
-Latency p95: 117.35 ms
-Latency p99: 127.35 ms
-Errors: 0
-
-SLI check:
-- success_rate >= 99.9%: OK
-- p95 <= 300 ms: OK
+Type     Name                                          50%    66%    75%    80%    90%    95%    98%    99%  99.9% 99.99%   100% # reqs
+--------|----------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+POST     pullRequest/create                             53     55     56     57     60     63     68     72     87    230    230   1045
+GET      team/get                                        3      4      4      4      4      5     10     16     38     38     38    273
+GET      users/getReview                                 4      4      4      5      5      7     11     12     36     36     36    544
+POST     users/setIsActive                              51     53     54     55     57     62     65     67    200    200    200    517
+--------|----------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+         Aggregated                                     50     52     54     55     57     61     65     68     87    230    230   2379
 ```
