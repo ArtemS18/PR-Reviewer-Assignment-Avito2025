@@ -107,5 +107,17 @@ python main.py drop_db
 ```
 ---
 
+Запуск WEB-интерфейс на порту ```http://localhost:8089``` стресс-теста locusto (длится 1 минуту):
+
+```
+python main.py locust_test
+```
+Для запуска теста нажмите Start
+(бд с тестовыми данными заполняется автоматически)
+
+Пример вывода теста:
+![alt text](docs/image.png)
+![alt text](docs/image-1.png)
+
 
 
