@@ -115,9 +115,6 @@ python main.py locust_test
 Для запуска теста нажмите Start
 (бд с тестовыми данными заполняется автоматически)
 
-Пример вывода теста:
-![alt text](docs/image.png)
-![alt text](docs/image-1.png)
 
 
 
